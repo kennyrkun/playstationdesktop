@@ -126,12 +126,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Desktop.cpp" />
+    <ClCompile Include="Interpolate.cpp" />
     <ClCompile Include="LoadingClock.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Spline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationManager.hpp" />
+    <ClInclude Include="Background.hpp" />
+    <ClInclude Include="Desktop.hpp" />
+    <ClInclude Include="Interpolate.hpp" />
     <ClInclude Include="LoadingClock.hpp" />
+    <ClInclude Include="Spline.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

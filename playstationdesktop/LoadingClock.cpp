@@ -37,9 +37,22 @@ LoadingClock::LoadingClock(float radius)
 	outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
 	outie.setPosition(inner.getPosition());
 
-	anim.addTask(hourHand, hourHandAngle, EASE_MED, true);
-	anim.addTask(minuteHand, minuteHandAngle, EASE_MED, true);
-	anim.addTask(secondHand, secondHandAngle, EASE_MED, true);
+	SYSTEMTIME systime;
+	GetLocalTime(&systime);
+	second = systime.wSecond;
+	minute = systime.wMinute + second / 60;
+	hour = systime.wHour + minute / 60;
+
+	if (hour > 12)
+		hour -= 12;
+
+	hourHandAngle = hour * 30;
+	minuteHandAngle = minute * 6;
+	secondHandAngle = second * 6;
+
+	anim.addTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
+	anim.addTask(minuteHand, minuteHandAngle, EaseType::ExpoEaseOut, 500, true);
+	anim.addTask(secondHand, secondHandAngle, EaseType::ExpoEaseOut, 500, true);
 }
 
 LoadingClock::~LoadingClock()
@@ -53,21 +66,34 @@ void LoadingClock::Update()
 	{
 		if (switchingtoloading)
 		{
-			if (static_cast<int>(hourHand.getRotation()) == zero - 1)
+			if (static_cast<int>(hourHand.getRotation()) == zero)
 			{
-				if (static_cast<int>(minuteHand.getRotation()) == zero - 1)
+				if (static_cast<int>(minuteHand.getRotation()) == zero)
 				{
-					if (static_cast<int>(secondHand.getRotation()) == zero - 1)
+					if (static_cast<int>(secondHand.getRotation()) == zero)
 					{
 						readytoswitch = true;
 						switchingstates = false;
 
 						loading = true;
+						clock = false;
 						switchingtoloading = false;
 
 						std::cout << "Ready to switch to loading" << std::endl;
 					}
 				}
+			}
+
+			if (anim.tasks.empty())
+			{
+				readytoswitch = true;
+				switchingstates = false;
+
+				loading = true;
+				clock = false;
+				switchingtoloading = false;
+
+				std::cout << "Ready to switch to loading" << std::endl;
 			}
 		}
 		else if (switchingtoclock)
@@ -82,14 +108,15 @@ void LoadingClock::Update()
 				secondHand.setRotation(loadingHand.getRotation());
 
 				anim.clearTasks();
-				anim.addTask(hourHand, hourHandAngle, EASE_MED, true);
-				anim.addTask(minuteHand, minuteHandAngle, EASE_MED, true);
-				anim.addTask(secondHand, secondHandAngle, EASE_MED, true);
+				anim.addTask(hourHand, hourHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addTask(minuteHand, minuteHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addTask(secondHand, secondHandAngle, EaseType::LinearEaseNone, 500, true);
 
+				clock = true;
 				loading = false;
 				switchingtoclock = false;
 
-				std::cout << "Ready to switch to clock" << std::endl;
+				std::cout << "switched to clock" << std::endl;
 			}
 		}
 	}
@@ -113,40 +140,36 @@ void LoadingClock::Update()
 		{
 			if (loadingHand.getRotation() == 0)
 			{
-				std::cout << "resetting at " << outie.getRadius() << ", " << std::to_string(outie.getFillColor().a) << std::endl;
-
 				outie.setRadius(0);
 				outie.setFillColor(sf::Color(200, 200, 200, (a = 255)));
 			}
 		}
 	}
-	else // clock
+	else if (clock) // clock
 	{
 		SYSTEMTIME systime;
 		GetLocalTime(&systime);
 		second = systime.wSecond;
 		minute = systime.wMinute + second / 60;
-
-		hour = systime.wHour;
+		hour = systime.wHour + minute / 60;
 
 		if (hour > 12)
 			hour -= 12;
-
-		hour += minute / 60;
 
 		hourHandAngle = hour * 30;
 		minuteHandAngle = minute * 6;
 		secondHandAngle = second * 6;
 
-		// TODO: fix this
-		if (secondHandAngle == 0)
-			secondHand.setRotation(0);
-
-		if (minuteHandAngle == 0)
-			minuteHand.setRotation(0);
-
-		if (hourHandAngle == 0)
-			hourHand.setRotation(0);
+		if (anim.tasks.empty())
+		{
+			hourHand.setRotation(hourHandAngle);
+			minuteHand.setRotation(minuteHandAngle);
+			secondHand.setRotation(secondHandAngle);
+		}
+	}
+	else
+	{
+		std::cout << "something is wrong" << std::endl;
 	}
 
 	anim.Update();
@@ -160,13 +183,13 @@ void LoadingClock::setLoading(bool loading)
 	{
 		std::cout << "switching to loading state" << std::endl;
 
+		switchingtoclock = false;
 		switchingtoloading = true;
 
 		anim.clearTasks();
-
-		anim.addTask(hourHand, zero, EASE_FAST);
-		anim.addTask(minuteHand, zero, EASE_FAST);
-		anim.addTask(secondHand, zero, EASE_FAST);
+		anim.addTask(hourHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addTask(minuteHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addTask(secondHand, zero, EaseType::CubicEaseIn, 500);
 
 		loadingHand.setRotation(zero);
 	}
@@ -174,13 +197,13 @@ void LoadingClock::setLoading(bool loading)
 	{
 		std::cout << "switching to clock state" << std::endl;
 
+		switchingtoloading = false;
 		switchingtoclock = true;
 
-		//			anim.clearTasks();
-
-		//			anim.addTask(hourHand, hourHandAngle);
-		//			anim.addTask(minuteHand, minuteHandAngle);
-		//			anim.addTask(secondHand, secondHandAngle);
+		anim.clearTasks();
+		anim.addTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
+		anim.addTask(minuteHand, minuteHandAngle, EaseType::ExpoEaseOut, 500, true);
+		anim.addTask(secondHand, secondHandAngle, EaseType::ExpoEaseOut, 500, true);
 	}
 }
 
@@ -204,13 +227,13 @@ sf::Vector2f LoadingClock::getPosition()
 
 void LoadingClock::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (!loading)
+	if (clock)
 	{
+		target.draw(secondHand);
 		target.draw(minuteHand);
 		target.draw(hourHand);
-		target.draw(secondHand);
 	}
-	else
+	else if (loading)
 	{
 		target.draw(outie);
 		target.draw(loadingHand);

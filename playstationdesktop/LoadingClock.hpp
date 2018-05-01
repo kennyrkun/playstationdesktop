@@ -8,18 +8,7 @@ class LoadingClock : public sf::Drawable
 {
 public:
 	LoadingClock(float radius = 20);
-
 	~LoadingClock();
-
-	void Update();
-
-	void setLoading(bool loading);
-
-	void setPosition(const sf::Vector2f& pos);
-
-	sf::Vector2f getPosition();
-
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	AnimationManager anim;
 
@@ -43,6 +32,16 @@ public:
 	float loadingSpinSpeed = 5;
 
 	bool loading = false;
+	bool clock = true;
+
+	void setLoading(bool loading);
+
+	// relative to the center
+	void setPosition(const sf::Vector2f& pos);
+	sf::Vector2f getPosition();
+
+	void Update();
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 	bool switchingstates;

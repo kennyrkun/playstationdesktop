@@ -3,46 +3,126 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <functional>
 #include <iostream>
 #include <vector>
 
-#define EASE_SLOWEST .0075f
-#define  EASE_SLOWER .01f
-#define    EASE_SLOW .025f
-#define     EASE_MED .05f
-#define    EASE_FAST .075f
-#define  EASE_FASTER .25f
-#define EASE_FASTEST .50f
-
-// TODO: move this into it's own file or into AnimationManager.cpp
-class ARotation
+enum EaseType
 {
-public:
-	ARotation(sf::RectangleShape &shape, float &target, float ease, bool constant);
-	~ARotation();
-
-	float originalRotation;
-	float currentRotation;
-	float &targetRotation;
-
-	float ease;
-
-	bool isDoing = true;
-	bool constant;
-
-	sf::RectangleShape& shape;
-
-	void Update();
+	BackEaseIn,
+	BackEaseOut,
+	BackEaseInOut,
+	BounceEaseIn,
+	BounceEaseOut,
+	BounceEaseInOut,
+	CircEaseIn,
+	CircEaseOut,
+	CircEaseInOut,
+	CubicEaseIn,
+	CubicEaseOut,
+	CubicEaseInOut,
+	ElasticEaseIn,
+	ElasticEaseOut,
+	ElasticEaseInOut,
+	ExpoEaseIn,
+	ExpoEaseOut,
+	ExpoEaseInOut,
+	LinearEaseNone,
+	LinearEaseIn,
+	LinearEaseOut,
+	LinearEaseInOut,
+	QuartEaseIn,
+	QuartEaseOut,
+	QuartEaseInOut,
+	QuadEaseIn,
+	QuadEaseOut,
+	QuadEaseInOut,
+	QuintEaseIn,
+	QuintEaseOut,
+	QuintEaseInOut
 };
 
+class AnimatedTask
+{
+public:
+	virtual ~AnimatedTask() = 0;
+
+	bool constant = false;
+
+	int animationID = 0;
+
+	virtual bool pastTime() = 0;
+
+	virtual void Update() = 0;
+
+private:
+	std::function<float(float t, float b, float c, float d)> easeFunction;
+};
+
+// TODO: support rotation
+class AnimatedRotation : public AnimatedTask
+{
+public:
+	AnimatedRotation(sf::Shape &shape, float& targetRotation, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	~AnimatedRotation();
+
+	int animationID;
+
+	int duration; // miliseconds
+	sf::Clock tick;
+
+	bool pastTime();
+	bool constant = false;
+
+	sf::Shape& shape;
+
+	float& targetRotation;
+	float originalRotation;
+
+	void Update();
+
+private:
+	float changeInRotation;
+
+	std::function<float(float t, float b, float c, float d)> easeFunction;
+};
+
+class AnimatedTranslation : public AnimatedTask
+{
+public:
+	AnimatedTranslation(sf::Shape &shape, sf::Vector2f targetPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	~AnimatedTranslation();
+
+	int animationID;
+
+	int duration; // miliseconds
+	sf::Clock tick;
+
+	bool pastTime();
+	bool constant = false;
+
+	sf::Shape& shape;
+
+	sf::Vector2f targetPosition;
+	sf::Vector2f originalPosition;
+
+	void Update();
+
+private:
+	sf::Vector2f changeInPosition;
+
+	std::function<float(float t, float b, float c, float d)> easeFunction;
+};
+
+// Class for managing physical animations like translations and rotations
 class AnimationManager
 {
 public:
 	AnimationManager();
-
 	~AnimationManager();
 
-	void addTask(sf::RectangleShape& shape, float &rotation, float ease, bool constant = false);
+	int addTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
+	int addTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
 
 	void clearTasks();
 
@@ -53,7 +133,7 @@ public:
 //	sf::Time duration = sf::Time::Zero;
 //	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 
-	std::vector<ARotation*> tasks;
+	std::vector<AnimatedTask*> tasks;
 };
 
 #endif // !ANIMATION_MANAGER_HPP

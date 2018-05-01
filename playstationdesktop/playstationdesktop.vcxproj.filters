@@ -13,7 +13,19 @@
     <ClCompile Include="LoadingClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Spline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpolate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Desktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -21,7 +33,19 @@
     <ClInclude Include="LoadingClock.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Background.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spline.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpolate.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="AnimationManager.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Desktop.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
