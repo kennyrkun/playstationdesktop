@@ -26,7 +26,7 @@ sf::Vector2f AnimatedTask::getCurrent_v2f()
 
 // Animated Number
 
-AnimatedNumber::AnimatedNumber(size_t original, size_t target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
+AnimatedNumber::AnimatedNumber(size_t original, size_t& target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
 	: original(original), target(target), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
 {
 	std::cout << "anum " << animationID << std::endl;
@@ -145,12 +145,12 @@ void AnimatedTranslation::Update()
 
 // animation manager
 
-AnimationManager::AnimationManager()
+PhysicalAnimator::PhysicalAnimator()
 {
 	std::cout << "aman" << std::endl;
 }
 
-AnimationManager::~AnimationManager()
+PhysicalAnimator::~PhysicalAnimator()
 {
 	for (size_t i = 0; i < tasks.size(); i++)
 		delete tasks[i];
@@ -231,11 +231,11 @@ std::function<float(float, float, float, float)> getEaseFunc(EaseType ease)
 	return easeFunction;
 }
 
-int AnimationManager::addTranslationTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant)
+int PhysicalAnimator::addTranslationTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding translation task" << std::endl;
 
-	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, tasks.size());
+	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, totalAnimations++);
 
 	tasks.push_back(task);
 
@@ -245,36 +245,38 @@ int AnimationManager::addTranslationTask(sf::Shape& shape, sf::Vector2f destinat
 	return tasks.back()->animationID;
 }
 
-int AnimationManager::addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant)
+int PhysicalAnimator::addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding rotation task" << std::endl;
 
-	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, tasks.size());
+	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, totalAnimations++);
 
 	tasks.push_back(task);
 
 	return tasks.back()->animationID;
 }
 
-int AnimationManager::addTask(size_t original, size_t target, EaseType ease, int duration, bool constant)
+int PhysicalAnimator::addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant)
 {
-	std::cout << "adding rotation task" << std::endl;
+	std::cout << "adding number task" << std::endl;
 
-	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, tasks.size());
+	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, totalAnimations++);
 
 	tasks.push_back(task);
 
 	return tasks.back()->animationID;
 }
 
-void AnimationManager::clearTasks()
+void PhysicalAnimator::clearTasks()
 {
+	// reset totalAnimations?
+
 	for (size_t i = 0; i < tasks.size(); i++)
 		delete tasks[i];
 	tasks.clear();
 }
 
-void AnimationManager::Update()
+void PhysicalAnimator::Update()
 {
 	for (size_t i = 0; i < tasks.size(); i++)
 	{

@@ -25,7 +25,12 @@ public:
 
 	sf::Spline spline;
 
-	AnimationManager anim;
+	PhysicalAnimator anim;
+
+private:
+	size_t maxSplinePosition;
+	size_t middleSplinePosition;
+	size_t minSplinePosition;
 };
 
 #endif // !BACKGROUND_HPP

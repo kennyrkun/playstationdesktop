@@ -10,7 +10,7 @@ public:
 	LoadingClock(float radius = 20);
 	~LoadingClock();
 
-	AnimationManager anim;
+	PhysicalAnimator anim;
 
 	sf::CircleShape outer;
 	sf::CircleShape inner;

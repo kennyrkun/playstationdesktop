@@ -5,16 +5,21 @@
 
 Background::Background()
 {
+
 	backgroundTexture.loadFromFile("./psdk/background.jpg");
 	background.setTexture(&backgroundTexture);
 
 	spline.setThickness(5);
 	spline.setColor(sf::Color::Black);
 
-	// TODO: find a way to determine how many there should be and how space apart they should be based on window size
+	maxSplinePosition = 100;
+	minSplinePosition = HEIGHT - 100;
+	middleSplinePosition = HEIGHT / 2;
 
 	std::vector<sf::Vector2f> vertices;
 
+	// TODO: amount of points depending on how wide the window is
+	const int numberOfPoints = 10;
 	for (size_t i = 0; i < 10; i++)
 	{
 		vertices.push_back(sf::Vector2f(50.f + (108.f * i), HEIGHT / 2));
@@ -32,7 +37,7 @@ Background::Background()
 
 	for (size_t i = 0; i < spline.getHandlesVisible(); i++)
 	{
-//		anim.addTranslationTask(spline[i], 0, 0, 0, true);
+		anim.addTask(spline[i].position.y, maxSplinePosition, EaseType::CircEaseOut, 0, true);
 	}
 }
 

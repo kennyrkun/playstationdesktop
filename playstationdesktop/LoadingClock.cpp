@@ -172,9 +172,9 @@ void LoadingClock::setLoading(bool loading)
 		switchingtoloading = true;
 
 		anim.clearTasks();
-		anim.addRotationTask(hourHand, zero, EaseType::CubicEaseIn, 500);
-		anim.addRotationTask(minuteHand, zero, EaseType::CubicEaseIn, 500);
-		anim.addRotationTask(secondHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addRotationTask(hourHand, zero, EaseType::CubicEaseIn, 1000);
+		anim.addRotationTask(minuteHand, zero, EaseType::CubicEaseIn, 1000);
+		anim.addRotationTask(secondHand, zero, EaseType::CubicEaseIn, 1000);
 
 		loadingHand.setRotation(zero);
 	}

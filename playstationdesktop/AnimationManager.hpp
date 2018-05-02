@@ -42,6 +42,7 @@ enum EaseType
 	QuintEaseInOut
 };
 
+// base animation class
 class AnimatedTask
 {
 public:
@@ -64,10 +65,11 @@ private:
 	std::function<float(float t, float b, float c, float d)> easeFunction;
 };
 
+// class for animating numbers
 class AnimatedNumber : public AnimatedTask
 {
 public:
-	AnimatedNumber(size_t original, size_t target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	AnimatedNumber(size_t original, size_t& target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
 	~AnimatedNumber();
 
 	int animationID;
@@ -81,7 +83,7 @@ public:
 	bool pastTime();
 	bool constant = false;
 
-	size_t target;
+	size_t& target;
 	size_t original;
 
 	void Update();
@@ -93,6 +95,7 @@ private:
 	std::function<float(float t, float b, float c, float d)> easeFunction;
 };
 
+// class for animating object's rotations
 class AnimatedRotation : public AnimatedTask
 {
 public:
@@ -123,6 +126,7 @@ private:
 	std::function<float(float t, float b, float c, float d)> easeFunction;
 };
 
+// class for animating object's positions
 class AnimatedTranslation : public AnimatedTask
 {
 public:
@@ -153,27 +157,28 @@ private:
 	std::function<float(float t, float b, float c, float d)> easeFunction;
 };
 
-// Class for managing physical animations like translations and rotations
-class AnimationManager
+// class for managing physical animations like translations and rotations
+class PhysicalAnimator
 {
 public:
-	AnimationManager();
-	~AnimationManager();
+	PhysicalAnimator();
+	~PhysicalAnimator();
 
 	int addTranslationTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
-	int addTask(size_t original, size_t target, EaseType ease, int duration, bool constant = false);
+	int addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant = false);
+
+	void updateTaskTarget(size_t taskID, size_t newTarget);
+	void updateTaskTarget(size_t taskID, sf::Vector2f newTarget);
 
 	void clearTasks();
 
 	void Update();
 
-//	sf::Clock tickClock;
-//	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-//	sf::Time duration = sf::Time::Zero;
-//	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
-
 	std::vector<AnimatedTask*> tasks;
+
+private:
+	size_t totalAnimations;
 };
 
 #endif // !ANIMATION_MANAGER_HPP
