@@ -1,9 +1,10 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include <SFML/Graphics.hpp>
-
+#include "AnimationManager.hpp"
 #include "Spline.hpp"
+
+#include <SFML/Graphics.hpp>
 
 class Background : public sf::Drawable
 {
@@ -23,6 +24,8 @@ public:
 	sf::Texture backgroundTexture;
 
 	sf::Spline spline;
+
+	AnimationManager anim;
 };
 
 #endif // !BACKGROUND_HPP

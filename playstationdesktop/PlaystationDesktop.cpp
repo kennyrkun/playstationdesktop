@@ -45,6 +45,8 @@ void PlaystationDesktop::HandleEvents()
 		if (event.type == sf::Event::EventType::Closed)
 		{
 			window.close();
+
+			isRunning = false;
 		}
 		else if (event.type == sf::Event::KeyPressed)
 		{

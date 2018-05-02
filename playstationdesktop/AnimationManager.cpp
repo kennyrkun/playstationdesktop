@@ -9,11 +9,57 @@ AnimatedTask::~AnimatedTask()
 	// do nothing
 }
 
+size_t AnimatedTask::getCurrent_st()
+{
+	return size_t();
+}
+
+float AnimatedTask::getCurrent_f()
+{
+	return 0.0f;
+}
+
+sf::Vector2f AnimatedTask::getCurrent_v2f()
+{
+	return sf::Vector2f();
+}
+
+// Animated Number
+
+AnimatedNumber::AnimatedNumber(size_t original, size_t target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
+	: original(original), target(target), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
+{
+	std::cout << "anum " << animationID << std::endl;
+
+	original = original;
+
+	changeInNumber = target - original;
+
+	tick.restart();
+}
+
+AnimatedNumber::~AnimatedNumber()
+{
+	std::cout << "danum " << animationID << std::endl;
+}
+
+bool AnimatedNumber::pastTime()
+{
+	return tick.getElapsedTime().asMilliseconds() < duration;
+}
+
+void AnimatedNumber::Update()
+{
+	current = easeFunction(tick.getElapsedTime().asMilliseconds(), original, changeInNumber, duration);
+}
+
+
+// Animated Rotation
 // this is kind of nasty
 // FIXME: we need other ways to specific rotation
 // TODO: figure out how to deal with rotations beyond 360 d
-
-AnimatedRotation::AnimatedRotation(sf::Shape &shape, float& targetRotation, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) : shape(shape), targetRotation(targetRotation), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
+AnimatedRotation::AnimatedRotation(sf::Shape &shape, float targetRotation, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
+	: shape(shape), targetRotation(targetRotation), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
 {
 	std::cout << "arot " << animationID << std::endl;
 
@@ -42,9 +88,11 @@ void AnimatedRotation::Update()
 	shape.setRotation(easeFunction(tick.getElapsedTime().asMilliseconds(), originalRotation, changeInRotation, duration));
 };
 
+
 // AnimatedTranslation
 
-AnimatedTranslation::AnimatedTranslation(sf::Shape &shape, sf::Vector2f destinationPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) : shape(shape), targetPosition(destinationPosition), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
+AnimatedTranslation::AnimatedTranslation(sf::Shape &shape, sf::Vector2f destinationPosition, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
+	: shape(shape), targetPosition(destinationPosition), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
 {
 	std::cout << "atran " << animationID << std::endl;
 
@@ -183,8 +231,10 @@ std::function<float(float, float, float, float)> getEaseFunc(EaseType ease)
 	return easeFunction;
 }
 
-int AnimationManager::addTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant)
+int AnimationManager::addTranslationTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant)
 {
+	std::cout << "adding translation task" << std::endl;
+
 	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, tasks.size());
 
 	tasks.push_back(task);
@@ -195,9 +245,22 @@ int AnimationManager::addTask(sf::Shape& shape, sf::Vector2f destination, EaseTy
 	return tasks.back()->animationID;
 }
 
-int AnimationManager::addTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant)
+int AnimationManager::addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant)
 {
+	std::cout << "adding rotation task" << std::endl;
+
 	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, tasks.size());
+
+	tasks.push_back(task);
+
+	return tasks.back()->animationID;
+}
+
+int AnimationManager::addTask(size_t original, size_t target, EaseType ease, int duration, bool constant)
+{
+	std::cout << "adding rotation task" << std::endl;
+
+	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, tasks.size());
 
 	tasks.push_back(task);
 

@@ -12,7 +12,7 @@ LoadingClock::LoadingClock(float radius)
 	outer.setPosition(0, 0);
 	outer.setPointCount(100);
 
-	inner.setRadius(outer.getRadius() / 12);
+	inner.setRadius(outer.getRadius() / 8);
 	inner.setOrigin(sf::Vector2f(inner.getLocalBounds().width / 2, inner.getLocalBounds().height / 2));
 	inner.setPosition(outer.getPosition());
 
@@ -20,15 +20,15 @@ LoadingClock::LoadingClock(float radius)
 	loadingHand.setOrigin(sf::Vector2f(loadingHand.getLocalBounds().width / 2, 0));
 	loadingHand.setPosition(inner.getPosition());
 
-	minuteHand.setSize(sf::Vector2f(1.5f, -outer.getRadius()));
+	minuteHand.setSize(sf::Vector2f(2.f, -outer.getRadius()));
 	minuteHand.setOrigin(sf::Vector2f(minuteHand.getLocalBounds().width / 2, 0));
 	minuteHand.setPosition(inner.getPosition());
 
-	hourHand.setSize(sf::Vector2f(2.0f, -(outer.getRadius() - 5)));
+	hourHand.setSize(sf::Vector2f(2.f, -(outer.getRadius() - 5)));
 	hourHand.setOrigin(sf::Vector2f(hourHand.getLocalBounds().width / 2, 0));
 	hourHand.setPosition(inner.getPosition());
 
-	secondHand.setSize(sf::Vector2f(1.0f, -outer.getRadius()));
+	secondHand.setSize(sf::Vector2f(2.0f, -outer.getRadius()));
 	secondHand.setOrigin(sf::Vector2f(secondHand.getLocalBounds().width / 2, 0));
 	secondHand.setPosition(inner.getPosition());
 	secondHand.setFillColor(sf::Color::Red);
@@ -91,9 +91,9 @@ void LoadingClock::Update()
 				secondHand.setRotation(loadingHand.getRotation());
 
 				anim.clearTasks();
-				anim.addTask(hourHand, hourHandAngle, EaseType::LinearEaseNone, 500, true);
-				anim.addTask(minuteHand, minuteHandAngle, EaseType::LinearEaseNone, 500, true);
-				anim.addTask(secondHand, secondHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addRotationTask(hourHand, hourHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addRotationTask(minuteHand, minuteHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addRotationTask(secondHand, secondHandAngle, EaseType::LinearEaseNone, 500, true);
 
 				clock = true;
 				loading = false;
@@ -114,7 +114,9 @@ void LoadingClock::Update()
 
 		if (outie.getRadius() < outdist - 1.25)
 		{
-			outie.setFillColor(sf::Color(200, 200, 200, a - 4));
+			// TODO: find a better colour for this, as the grey is not visible ont the background,
+			// but the black looks to bad on the grey background
+			outie.setFillColor(sf::Color(0, 0, 0, a - 4));
 
 			outie.setRadius(outie.getRadius() + 0.3f);
 			outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
@@ -124,7 +126,7 @@ void LoadingClock::Update()
 			if (loadingHand.getRotation() == 0)
 			{
 				outie.setRadius(0);
-				outie.setFillColor(sf::Color(200, 200, 200, (a = 255)));
+				outie.setFillColor(sf::Color(0, 0, 0, (a = 255)));
 			}
 		}
 	}
@@ -170,9 +172,9 @@ void LoadingClock::setLoading(bool loading)
 		switchingtoloading = true;
 
 		anim.clearTasks();
-		anim.addTask(hourHand, zero, EaseType::CubicEaseIn, 500);
-		anim.addTask(minuteHand, zero, EaseType::CubicEaseIn, 500);
-		anim.addTask(secondHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addRotationTask(hourHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addRotationTask(minuteHand, zero, EaseType::CubicEaseIn, 500);
+		anim.addRotationTask(secondHand, zero, EaseType::CubicEaseIn, 500);
 
 		loadingHand.setRotation(zero);
 	}
@@ -184,9 +186,9 @@ void LoadingClock::setLoading(bool loading)
 		switchingtoclock = true;
 
 		anim.clearTasks();
-		anim.addTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
-		anim.addTask(minuteHand, minuteHandAngle, EaseType::ExpoEaseOut, 500, true);
-		anim.addTask(secondHand, secondHandAngle, EaseType::ExpoEaseOut, 500, true);
+		anim.addRotationTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
+		anim.addRotationTask(minuteHand, minuteHandAngle, EaseType::ExpoEaseOut, 500, true);
+		anim.addRotationTask(secondHand, secondHandAngle, EaseType::ExpoEaseOut, 500, true);
 	}
 }
 
