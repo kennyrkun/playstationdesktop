@@ -25,7 +25,7 @@
     <ClCompile Include="AnimationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Desktop.cpp">
+    <ClCompile Include="PlaystationDesktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -45,7 +45,7 @@
     <ClInclude Include="AnimationManager.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Desktop.hpp">
+    <ClInclude Include="PlaystationDesktop.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

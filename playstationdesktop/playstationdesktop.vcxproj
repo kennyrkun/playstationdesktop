@@ -127,7 +127,7 @@
   <ItemGroup>
     <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="Background.cpp" />
-    <ClCompile Include="Desktop.cpp" />
+    <ClCompile Include="PlaystationDesktop.cpp" />
     <ClCompile Include="Interpolate.cpp" />
     <ClCompile Include="LoadingClock.cpp" />
     <ClCompile Include="main.cpp" />
@@ -136,7 +136,7 @@
   <ItemGroup>
     <ClInclude Include="AnimationManager.hpp" />
     <ClInclude Include="Background.hpp" />
-    <ClInclude Include="Desktop.hpp" />
+    <ClInclude Include="PlaystationDesktop.hpp" />
     <ClInclude Include="Interpolate.hpp" />
     <ClInclude Include="LoadingClock.hpp" />
     <ClInclude Include="Spline.hpp" />

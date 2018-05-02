@@ -6,11 +6,11 @@
 #include "LoadingClock.hpp"
 #include "Background.hpp"
 
-class Desktop
+class PlaystationDesktop
 {
 public:
-	Desktop();
-	~Desktop();
+	PlaystationDesktop();
+	~PlaystationDesktop();
 
 	void start();
 	void shutdown();
@@ -19,8 +19,16 @@ public:
 	void Update();
 	void Draw();
 
+	bool running() { return isRunning;  }
+
 private:
+	bool isRunning;
+
 	sf::Text statustext;
+	sf::Font font;
+
+	LoadingClock clock;
+	Background background;
 
 	sf::RenderWindow window;
 };

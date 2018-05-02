@@ -36,23 +36,6 @@ LoadingClock::LoadingClock(float radius)
 	outie.setFillColor(sf::Color(200, 200, 200));
 	outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
 	outie.setPosition(inner.getPosition());
-
-	SYSTEMTIME systime;
-	GetLocalTime(&systime);
-	second = systime.wSecond;
-	minute = systime.wMinute + second / 60;
-	hour = systime.wHour + minute / 60;
-
-	if (hour > 12)
-		hour -= 12;
-
-	hourHandAngle = hour * 30;
-	minuteHandAngle = minute * 6;
-	secondHandAngle = second * 6;
-
-	anim.addTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
-	anim.addTask(minuteHand, minuteHandAngle, EaseType::ExpoEaseOut, 500, true);
-	anim.addTask(secondHand, secondHandAngle, EaseType::ExpoEaseOut, 500, true);
 }
 
 LoadingClock::~LoadingClock()
