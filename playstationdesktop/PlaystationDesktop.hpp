@@ -6,10 +6,17 @@
 #include "LoadingClock.hpp"
 #include "Background.hpp"
 
+struct ApplicationSettings
+{
+	std::string desktop_binary_directory;
+
+	sf::Vector2f windowSize = sf::Vector2f(1080, 720);
+};
+
 class PlaystationDesktop
 {
 public:
-	PlaystationDesktop();
+	PlaystationDesktop(ApplicationSettings settings);
 	~PlaystationDesktop();
 
 	void start();
@@ -23,6 +30,8 @@ public:
 
 private:
 	bool isRunning;
+
+	ApplicationSettings appSettings;
 
 	sf::Text statustext;
 	sf::Font font;

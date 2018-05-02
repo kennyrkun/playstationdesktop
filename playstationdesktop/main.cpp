@@ -2,9 +2,12 @@
 
 #include "PlaystationDesktop.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-	PlaystationDesktop psdk;
+	ApplicationSettings appSettings;
+	// TODO: command line arguments
+
+	PlaystationDesktop psdk(appSettings);
 
 	psdk.start();
 

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-PlaystationDesktop::PlaystationDesktop()
+PlaystationDesktop::PlaystationDesktop(ApplicationSettings appSettings) : appSettings(appSettings)
 {
 }
 
