@@ -9,7 +9,6 @@ LoadingClock::LoadingClock(float radius)
 	outer.setOutlineColor(sf::Color::White);
 	outer.setOutlineThickness(-2);
 	outer.setOrigin(sf::Vector2f(outer.getLocalBounds().width / 2, outer.getLocalBounds().height / 2));
-	outer.setPosition(0, 0);
 	outer.setPointCount(100);
 
 	inner.setRadius(outer.getRadius() / 8);
@@ -33,7 +32,9 @@ LoadingClock::LoadingClock(float radius)
 	secondHand.setPosition(inner.getPosition());
 	secondHand.setFillColor(sf::Color::Red);
 
-	outie.setFillColor(sf::Color(200, 200, 200));
+	outie.setFillColor(sf::Color(0, 0, 0, 0));
+	outie.setOutlineColor(sf::Color::White);
+	outie.setOutlineThickness(-2);
 	outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
 	outie.setPosition(inner.getPosition());
 }
@@ -112,21 +113,23 @@ void LoadingClock::Update()
 		float a = outie.getFillColor().a;
 		float outdist = outer.getRadius();
 
-		if (outie.getRadius() < outdist - 1.25)
+		if (outie.getRadius() < outdist)
 		{
-			// TODO: find a better colour for this, as the grey is not visible ont the background,
-			// but the black looks to bad on the grey background
-			outie.setFillColor(sf::Color(0, 0, 0, a - 4));
-
 			outie.setRadius(outie.getRadius() + 0.3f);
 			outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
+			outie.setPosition(inner.getPosition());
 		}
 		else
 		{
 			if (loadingHand.getRotation() == 0)
 			{
+				outie.setPosition(inner.getPosition());
 				outie.setRadius(0);
-				outie.setFillColor(sf::Color(0, 0, 0, (a = 255)));
+			}
+			else
+			{
+				outie.setRadius(outie.getRadius() + 0.1f);
+				outie.setOrigin(outie.getLocalBounds().width / 2, outie.getLocalBounds().height / 2);
 			}
 		}
 	}

@@ -226,7 +226,10 @@ std::function<float(float, float, float, float)> getEaseFunc(EaseType ease)
 	else if (ease == EaseType::QuintEaseInOut)
 		easeFunction = &Interpolate::Quint::easeInOut;
 	else
-		std::cout << static_cast<int>(ease) << "is not a valid interpolation function" << std::endl;
+	{
+		std::cout << static_cast<int>(ease) << " could not be mapped to a valid function, using LinearEaseNone" << std::endl;
+		easeFunction = &Interpolate::Linear::easeNone;
+	}
 
 	return easeFunction;
 }
