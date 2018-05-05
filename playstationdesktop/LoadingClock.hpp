@@ -50,6 +50,8 @@ private:
 	bool readytoswitch;
 
 	float zero = 360;
+
+	void updateTime();
 };
 
 #endif // !LOADING_CLOCK_HPP

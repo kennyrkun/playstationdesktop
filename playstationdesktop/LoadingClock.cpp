@@ -132,21 +132,14 @@ void LoadingClock::Update()
 	}
 	else if (clock) // clock
 	{
-		SYSTEMTIME systime;
-		GetLocalTime(&systime);
-		second = systime.wSecond;
-		minute = systime.wMinute + second / 60;
-		hour = systime.wHour + minute / 60;
-
-		if (hour > 12)
-			hour -= 12;
-
-		hourHandAngle = hour * 30;
-		minuteHandAngle = minute * 6;
-		secondHandAngle = second * 6;
-
 		if (anim.tasks.empty())
 		{
+			updateTime();
+
+			hourHandAngle = hour * 30;
+			minuteHandAngle = minute * 6;
+			secondHandAngle = second * 6;
+
 			hourHand.setRotation(hourHandAngle);
 			minuteHand.setRotation(minuteHandAngle);
 			secondHand.setRotation(secondHandAngle);
@@ -184,6 +177,11 @@ void LoadingClock::setLoading(bool loading)
 
 		switchingtoloading = false;
 		switchingtoclock = true;
+
+		updateTime();
+		hourHandAngle = hour * 30;
+		minuteHandAngle = minute * 6;
+		secondHandAngle = second * 6;
 
 		anim.clearTasks();
 		anim.addRotationTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
@@ -226,4 +224,20 @@ void LoadingClock::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 	target.draw(inner);
 	target.draw(outer);
+}
+
+// Private:
+
+void LoadingClock::updateTime()
+{
+	SYSTEMTIME systime;
+	GetLocalTime(&systime);
+	second = systime.wSecond;
+	minute = systime.wMinute + second / 60;
+	hour = systime.wHour + minute / 60;
+
+	// normal clocks cannot show 24 hour time
+	// if we're in 24 hour format, subtract 12
+	if (hour > 12)
+		hour -= 12;
 }
