@@ -32,6 +32,7 @@ Background::Background()
 	for (size_t i = 0; i < spline.getVertexCount(); i++)
 	{
 		sf::CircleShape* cir = new sf::CircleShape(5);
+		cir->setOrigin(sf::Vector2f(2.5, 2.5));
 		circles.push_back(cir);
 	}
 

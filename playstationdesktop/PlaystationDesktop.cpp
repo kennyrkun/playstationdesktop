@@ -15,7 +15,10 @@ PlaystationDesktop::~PlaystationDesktop()
 
 void PlaystationDesktop::start()
 {
-	window.create(sf::VideoMode(1080, 720), "title");
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+
+	window.create(sf::VideoMode(1080, 720), "title", sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(60);
 

@@ -91,10 +91,20 @@ void LoadingClock::Update()
 				hourHand.setRotation(loadingHand.getRotation());
 				secondHand.setRotation(loadingHand.getRotation());
 
+				// in miliseconds
+				int animationTime = 1000;
+				float addedSeconds = animationTime / 1000;
+				float addedMinutes = addedSeconds / 60;
+				float addedHours = addedMinutes / 60;
+
+				hourHandAngle = (hour + addedHours) * 30;
+				minuteHandAngle = (minute + addedMinutes) * 6;
+				secondHandAngle = (second + addedSeconds) * 6;
+
 				anim.clearTasks();
-				anim.addRotationTask(hourHand, hourHandAngle, EaseType::LinearEaseNone, 500, true);
-				anim.addRotationTask(minuteHand, minuteHandAngle, EaseType::LinearEaseNone, 500, true);
-				anim.addRotationTask(secondHand, secondHandAngle, EaseType::LinearEaseNone, 500, true);
+				anim.addRotationTask(hourHand, hourHandAngle, EaseType::CubicEaseOut, animationTime, true);
+				anim.addRotationTask(minuteHand, minuteHandAngle, EaseType::CubicEaseOut, animationTime, true);
+				anim.addRotationTask(secondHand, secondHandAngle, EaseType::CubicEaseOut, animationTime, true);
 
 				clock = true;
 				loading = false;
@@ -182,9 +192,16 @@ void LoadingClock::setLoading(bool loading)
 		switchingtoclock = true;
 
 		updateTime();
-		hourHandAngle = hour * 30;
-		minuteHandAngle = minute * 6;
-		secondHandAngle = second * 6;
+
+		// in miliseconds
+		int animationTime = 5000;
+		float addedSeconds = animationTime / 1000;
+		float addedMinutes = addedSeconds / 60;
+		float addedHours = addedMinutes / 60;
+
+		hourHandAngle = (hour + addedHours) * 30;
+		minuteHandAngle = (minute + addedMinutes) * 6;
+		secondHandAngle = (second + addedSeconds) * 6;
 
 		anim.clearTasks();
 		anim.addRotationTask(hourHand, hourHandAngle, EaseType::ExpoEaseOut, 500, true);
