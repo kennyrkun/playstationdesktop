@@ -1,10 +1,6 @@
 #include "Background.hpp"
 
-// TODO: get rid of these
-#define WIDTH 1080
-#define HEIGHT 720
-
-Background::Background()
+Background::Background() : rng(dev())
 {
 	/*
 	std::random_device dev;
@@ -19,10 +15,6 @@ Background::Background()
 	spline.setThickness(100);
 	spline.setColor(sf::Color::Black);
 
-	maxSplinePosition = 100;
-	minSplinePosition = HEIGHT - 100;
-	middleSplinePosition = HEIGHT / 2;
-
 	std::vector<sf::Vector2f> vertices;
 
 	// TODO: set color to 205, 205, 205
@@ -30,7 +22,7 @@ Background::Background()
 	// TODO: amount of points depending on how wide the window is
 	const int numberOfPoints = 10;
 	for (size_t i = 0; i < 10; i++)
-		vertices.push_back(sf::Vector2f(50.f + (108.f * i), middleSplinePosition));
+		vertices.push_back(sf::Vector2f(50.f + (108.f * i), background.getSize().y / 2));
 
 	spline.addVertices(0, vertices);
 	spline.setBezierInterpolation(); // enable Bezier spline
@@ -48,7 +40,7 @@ Background::Background()
 	for (size_t i = 0; i < spline.getVertexCount(); i++)
 	{
 		swap = !swap;
-		anim.addTranslationTask(*circles[i], sf::Vector2f(circles[i]->getPosition().x, swap ? maxSplinePosition : minSplinePosition), EaseType::CircEaseOut, 10000, true);
+		anim.addTranslationTask(*circles[i], sf::Vector2f(circles[i]->getPosition().x, swap ? maxHeight : minHeight), EaseType::CircEaseOut, 10000, true);
 	}
 }
 
@@ -59,6 +51,9 @@ Background::~Background()
 void Background::setSize(const sf::Vector2f& size)
 {
 	background.setSize(size);
+
+	minHeight = 100;
+	minHeight = size.y - 100;
 }
 
 void Background::HandleEvents(sf::Event& e)
@@ -67,18 +62,20 @@ void Background::HandleEvents(sf::Event& e)
 
 void Background::Update()
 {
-	float max = 100;
-	float min = HEIGHT - 100;
-
 	anim.Update();
 
 	for (size_t i = 0; i < circles.size(); i++)
 	{
 		spline[i].position = circles[i]->getPosition();
 
-		if (circles[i]->getPosition().y <= max)
+		dist = std::uniform_int_distribution<std::mt19937::result_type>(minHeight, maxHeight);
+
+		int min = dist(rng);
+		int max= dist(rng);
+
+		if (circles[i]->getPosition().y <= maxHeight)
 			anim.addTranslationTask(*circles[i], sf::Vector2f(circles[i]->getPosition().x, min), EaseType::CubicEaseInOut, 10000, true);
-		else if (circles[i]->getPosition().y >= min)
+		else if (circles[i]->getPosition().y >= minHeight)
 			anim.addTranslationTask(*circles[i], sf::Vector2f(circles[i]->getPosition().x, max), EaseType::CubicEaseInOut, 10000, true);
 	}
 
