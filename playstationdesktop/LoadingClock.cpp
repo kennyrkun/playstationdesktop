@@ -68,7 +68,7 @@ void LoadingClock::Update()
 				}
 			}
 
-			if (anim.tasks.empty())
+			if (anim.working())
 			{
 				readytoswitch = true;
 				switchingstates = false;
@@ -145,7 +145,7 @@ void LoadingClock::Update()
 	}
 	else if (clock) // clock
 	{
-		if (anim.tasks.empty())
+		if (anim.working())
 		{
 			updateTime();
 

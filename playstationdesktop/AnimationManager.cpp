@@ -26,7 +26,7 @@ sf::Vector2f AnimatedTask::getCurrent_v2f()
 
 // Animated Number
 
-AnimatedNumber::AnimatedNumber(size_t original, size_t& target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
+AnimatedNumber::AnimatedNumber(size_t original, size_t target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID) 
 	: original(original), target(target), easeFunction(easeFunction), duration(duration), constant(constant), animationID(ID)
 {
 	std::cout << "anum " << animationID << std::endl;
@@ -45,7 +45,7 @@ AnimatedNumber::~AnimatedNumber()
 
 bool AnimatedNumber::pastTime()
 {
-	return tick.getElapsedTime().asMilliseconds() < duration;
+	return tick.getElapsedTime().asMilliseconds() > duration;
 }
 
 void AnimatedNumber::Update()
@@ -80,7 +80,7 @@ AnimatedRotation::~AnimatedRotation()
 // TODO: better method for figuring out if it's done
 bool AnimatedRotation::pastTime()
 {
-	return tick.getElapsedTime().asMilliseconds() < duration;
+	return tick.getElapsedTime().asMilliseconds() > duration;
 }
 
 void AnimatedRotation::Update()
@@ -121,7 +121,7 @@ AnimatedTranslation::~AnimatedTranslation()
 
 bool AnimatedTranslation::pastTime()
 {
-	return tick.getElapsedTime().asMilliseconds() < duration;
+	return tick.getElapsedTime().asMilliseconds() > duration;
 }
 
 void AnimatedTranslation::Update()
@@ -238,59 +238,69 @@ int PhysicalAnimator::addTranslationTask(sf::Shape& shape, sf::Vector2f destinat
 {
 	std::cout << "adding translation task" << std::endl;
 
-	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, totalAnimations++);
+	AnimatedTranslation* task = new AnimatedTranslation(shape, destination, getEaseFunc(ease), duration, constant, ++totalAnimations);
 
-	tasks.push_back(task);
-
-	// animation id needs to be assigned differently, because the
-	// total size of the thing might change and we could end up
-	// with multiple aniimations using the same id
-	return tasks.back()->animationID;
+	tasks.emplace(totalAnimations, task);
+	return totalAnimations;
 }
 
 int PhysicalAnimator::addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding rotation task" << std::endl;
 
-	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, totalAnimations++);
+	AnimatedRotation* task = new AnimatedRotation(shape, targetRotation, getEaseFunc(ease), duration, constant, ++totalAnimations);
 
-	tasks.push_back(task);
-
-	return tasks.back()->animationID;
+	tasks.emplace(totalAnimations, task);
+	return totalAnimations;
 }
 
-int PhysicalAnimator::addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant)
+int PhysicalAnimator::addTask(size_t original, size_t target, EaseType ease, int duration, bool constant)
 {
 	std::cout << "adding number task" << std::endl;
 
-	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, totalAnimations++);
+	AnimatedNumber* task = new AnimatedNumber(original, target, getEaseFunc(ease), duration, constant, ++totalAnimations);
 
-	tasks.push_back(task);
+	tasks.emplace(totalAnimations, task);
+	return totalAnimations;
+}
 
-	return tasks.back()->animationID;
+AnimatedTask* PhysicalAnimator::getTask(int taskID)
+{
+	// TODO: ensure the task exists before attempting to access it.
+	return tasks[taskID];
+}
+
+void PhysicalAnimator::clearTask(int taskID)
+{
+	tasks.erase(taskID);
 }
 
 void PhysicalAnimator::clearTasks()
 {
-	// reset totalAnimations?
-
-	for (size_t i = 0; i < tasks.size(); i++)
-		delete tasks[i];
+	for (auto& task : tasks)
+		delete task.second;
 	tasks.clear();
+
+	totalAnimations = 0;
 }
 
 void PhysicalAnimator::Update()
 {
-	for (size_t i = 0; i < tasks.size(); i++)
+	for (auto& task : tasks)
 	{
-		tasks[i]->Update();
+		task.second->Update();
 
-		if (!tasks[i]->constant && !tasks[i]->pastTime())
+		if (!task.second->constant && task.second->pastTime())
 		{
-			std::cout << "animation " << tasks[i]->animationID << " finished" << std::endl;
+			std::cout << "animation " << task.first << " finished" << std::endl;
 
-			delete tasks[i];
-			tasks.erase(std::remove(tasks.begin(), tasks.end(), tasks[i]), tasks.end());
+			delete task.second;
+			tasks.erase(task.first);
 		}
 	}
+}
+
+bool PhysicalAnimator::working()
+{
+	return tasks.empty();
 }

@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <map>
 #include <functional>
 #include <iostream>
 #include <vector>
@@ -69,7 +70,7 @@ private:
 class AnimatedNumber : public AnimatedTask
 {
 public:
-	AnimatedNumber(size_t original, size_t& target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
+	AnimatedNumber(size_t original, size_t target, std::function<float(float, float, float, float)> easeFunction, int duration, bool constant, int ID);
 	~AnimatedNumber();
 
 	int animationID;
@@ -83,7 +84,7 @@ public:
 	bool pastTime();
 	bool constant = false;
 
-	size_t& target;
+	size_t target;
 	size_t original;
 
 	void Update();
@@ -166,18 +167,25 @@ public:
 
 	int addTranslationTask(sf::Shape& shape, sf::Vector2f destination, EaseType ease, int duration, bool constant = false);
 	int addRotationTask(sf::Shape& shape, float& targetRotation, EaseType ease, int duration, bool constant = false);
-	int addTask(size_t original, size_t& target, EaseType ease, int duration, bool constant = false);
+	int addTask(size_t original, size_t target, EaseType ease, int duration, bool constant = false);
 
 	void updateTaskTarget(size_t taskID, size_t newTarget);
 	void updateTaskTarget(size_t taskID, sf::Vector2f newTarget);
+
+	AnimatedTask* getTask(int taskID);
+
+	void clearTask(int taskID);
 
 	void clearTasks();
 
 	void Update();
 
-	std::vector<AnimatedTask*> tasks;
-
+	bool working();
+	
 private:
+	std::map<int, AnimatedTask*> tasks;
+//	std::vector<AnimatedTask*> tasks;
+
 	size_t totalAnimations;
 };
 
